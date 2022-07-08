@@ -57,7 +57,10 @@ class MainMenu extends Phaser.Scene {
                         vx: -5,
                         vy: -10,
                         ay: 0.2,
-                        length: 999
+                        length: 100
+                    }),
+                    Movement.parametric({
+                        para: t => [(t / 5)**2, 200 * Math.sin(t / 10) + 300]
                     })
                 ]
             }),
