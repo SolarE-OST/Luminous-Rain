@@ -32,8 +32,12 @@ class MainMenu extends Phaser.Scene {
 
         }
 
+        //following code is temporary
+
+        this.glow = this.add.layer();
+
         this.testDroplet = this.add.droplet({
-            r: 10,
+            r: 4,
             movement: Movement.piecewise({
                 movementArray: [
                     Movement.linear({
@@ -66,6 +70,22 @@ class MainMenu extends Phaser.Scene {
             }),
             delay: 3
         });
+        
+
+        this.testDroplets = [];
+        for (let i = 0; i < 2 * Math.PI * 999 / 1000; i+=2 * Math.PI / 1000) {
+            this.testDroplets.push(this.add.droplet({
+                r: 4,
+                delay: 50,
+                movement: Movement.kinematic({
+                    x: 450,
+                    y: 300,
+                    vx: 2 * Math.cos(i) + Math.random(),
+                    vy: 2 * Math.sin(i) + Math.random(),
+                    ay: 0.03
+                })
+            }))
+        }
 
     }
 
@@ -83,6 +103,9 @@ class MainMenu extends Phaser.Scene {
         this.setFlicker();
 
 
-        this.testDroplet.move();
+        //this.testDroplet.move();
+        for (let singleDroplet of this.testDroplets) {
+            singleDroplet.move();
+        }
     }
 }

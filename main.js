@@ -48,10 +48,14 @@ const config = {
     ],
     */
     scene: [
-        MainMenu
+        Stage,
+        MainMenu,
+
+
     ]
 };
 
 
 //console.clear();
 const g = new Phaser.Game(config);
+const fpsLogger = setInterval(() => {console.log(g.loop.actualFps);}, 1000);

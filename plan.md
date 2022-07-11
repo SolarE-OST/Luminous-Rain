@@ -25,7 +25,7 @@
 
 ## Shape/Mechanics:
 
-- **Circle**: simple circular droplet, radius *r* and glow color *col*
+- **Plain**: simple circular droplet, radius *r* and glow color *col*
 - **Ellipse**: elliptical droplet, major radius *r1*, minor radius *r2*, glow color *col*, and rotation *rot* (in radians, from horizontal major axis)
 - **Star**: star-shaped droplet, radius *r* and glow color *col*. Typically 5 points
 - **Invisible**: droplet with no collision or appearance, typically used for **Follow** movement
@@ -45,7 +45,7 @@
   - **Firework**: **Burst** that comes after a droplet moving to the point source. Typically linear movement
   - **Pulsing Burst**: multiple explosions in sequence to the beat, appearing from a single pulsar droplet at the point source
 - **Falling**: droplet falling at specific *x* value down, has associated y-velocity *vy* and gravity *grav*. Typically has a circle warning at the top of the screen at the *x* value
-  - **Storm**: multiple **Falling** droplets that fall randomly for a specific period of time *length*. Typically has no gravity
+  - **Storm**: multiple **Falling** droplets that fall randomly for a specific period of time *length*. Typically has less gravity than a regular **Falling** droplet
   - **Scatter**: multiple **Falling** droplets that appear in sequence with a single "scatter droplet" appearing to drop them by moving to a random x-position at a specific *y*. 
 - **Spinner**: droplets originating outward from a point source *(x, y)* in sequence with a specific step *angle*, creating a spinning effect
   - **Multi Spinner**: spinner, but each "spoke" can have multiple lines of droplets beside it

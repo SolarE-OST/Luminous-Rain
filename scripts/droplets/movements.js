@@ -34,7 +34,7 @@ class Still extends BaseMovement {
 }
 
 class Linear extends BaseMovement {
-    constructor({ x, y, xf, yf, length=999999}) {
+    constructor({ x, y, xf, yf, length}) {
         super({ startX: x, startY: y, totalLength: length });
         this.xi = x;
         this.yi = y;
@@ -127,19 +127,9 @@ class Piecewise extends BaseMovement {
 }
 
 const Movement = {
-    still(args) {
-        return new Still(args); //{ x, y, length = 999999 }
-    },
-    linear(args) {
-        return new Linear(args); //{ x, y, xf, yf, length = 999999 }
-    },
-    piecewise(args) {
-        return new Piecewise(args); //{ x, y, movementArray }
-    },
-    kinematic(args) {
-        return new Kinematic(args); //{x, y, vx, vy, ax = 0, ay, length = 999999 }
-    },
-    parametric(args) {
-        return new Parametric(args); //{para, length = 999999 }
-    }
+    still: args => new Still(args), //{ x, y, length = 999999 }
+    linear: args => new Linear(args), //{ x, y, xf, yf, length }
+    piecewise: args => new Piecewise(args), //{ x, y, movementArray }
+    kinematic: args => new Kinematic(args), //{x, y, vx, vy, ax = 0, ay, length = 999999 }
+    parametric: args => new Parametric(args), //{para, length = 999999 }
 }
