@@ -78,3 +78,84 @@ let musicScenes = {
     }
 }
 
+let menu = {
+    assetLoad() {
+        this.load.audio("select", "music/sfx/select.wav");
+        this.load.audio("ok", "music/sfx/ok.wav");
+    },
+
+    soundInit() {
+        this.select = this.sound.add("select");
+        this.ok = this.sound.add("ok");
+        //this.sound.volume = options.soundEffectVolume;
+        this.sound.volume = 0.1;
+    },
+
+    goto(scene, stopMusic = true, musicData = {}) {
+        return () => {
+            if (!this.audioPlaying) {
+              return;
+            }
+            if (this.transitioning) {
+              return;
+            } else {
+              this.transitioning = true;
+            }
+            this.cameras.main.fadeOut(1000, 0, 0, 0, (c, t) => {
+              if (stopMusic) {
+                //this.music.gainNode.gain.value = (1 - t) * options.musicVolume;
+                this.music.gainNode.gain.value = (1 - t) * 0.1;
+              }
+            });
+            this.songLoaded = false;
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
+              if (stopMusic && this.audioPlaying) {
+                this.music.sourceNode.stop();
+              }
+              this.scene.stop();
+              //console.log(musicData.sound);
+              this.scene.start(scene, musicData);
+            })
+          }
+    },
+
+    button({x, y, w, h, text, callback, fontSize = h - 24, scrollFactor = 0.1, unlocked = true}) {
+        let buttonFrame = this.add.rectangle(x, y, w, h, 0x646496).setStrokeStyle(10, 0x505082).setScrollFactor(scrollFactor);
+
+        let buttonText = this.add.text(x, y, text, {
+            fontSize: fontSize,
+            align: "center",
+            color: "#f0f076",
+            stroke: "#505082",
+            strokeThickness: 10,
+        }).setOrigin(0.5, 0.5).setScrollFactor(scrollFactor);
+        if (!unlocked) {
+            buttonFrame.setAlpha(0.4);
+            buttonFrame.setStrokeStyle();
+            buttonText.setAlpha(0.4);
+        } else {
+            buttonText.setShadow(0, 0, "#f0f076", 20);
+            buttonFrame.setInteractive({
+                useHandCursor: true,
+            })
+            .on("pointerover", () => {
+                buttonFrame.scale = 1.1;
+                buttonText.scale = 1.1;
+                this.select.play();
+            })
+            .on("pointerout", () => {
+                buttonFrame.scale = 1;
+                buttonText.scale = 1;
+            })
+            .on("pointerdown", () => {
+                this.ok.play();
+                callback();
+            });
+        }
+        
+        let buttonGroup = this.add.group();
+        buttonGroup.add(buttonFrame);
+        buttonGroup.add(buttonText);
+        return buttonGroup;
+    },
+}
