@@ -1,5 +1,5 @@
 class Droplet extends Phaser.GameObjects.Ellipse { //circle droplet
-    constructor(scene, {r = 4, movement = Movement.still(x, y), delay = 0, life = 999999, dec = false, color = 0x0080ff, other = {}}) {
+    constructor(scene, defaultDelay, {r = 4, movement = Movement.still(300, 300), delay = defaultDelay, life = 999999, dec = false, color = 0x0080ff, other = {}}) {
         super(scene, movement.position.x, movement.position.y, 2 * r, 2 * r, 0xffffff)
         this.movement = movement;
         this.r = r;
@@ -10,11 +10,13 @@ class Droplet extends Phaser.GameObjects.Ellipse { //circle droplet
         this.dec = dec;
         this.color = color;
 
-        this.glow = scene.glow.add(scene.add.pointlight(this.x, this.y, this.color, this.r * 4, 0.6, 0.07));
+        
         this.readyDelete = false;
         for (let [k, v] of Object.entries(other)) {
             this[k] = v;
         }
+
+        this.glow = scene.glow.add(scene.add.pointlight(this.x, this.y, this.color, this.r * 4, 0.6, 0.07));
 
     }
 

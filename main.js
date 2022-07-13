@@ -60,4 +60,4 @@ const config = {
 //console.clear();
 const g = new Phaser.Game(config);
 
-//const fpsLogger = setInterval(() => {console.log(g.loop.actualFps);}, 1000);
+const fpsLogger = setInterval(() => {console.log(g.loop.actualFps);}, 1000);

@@ -7,6 +7,7 @@ function between(a, b, c) {
 
 
 let musicScenes = {
+    // gets the song given the path and sets object properties
     async getSong(url) {
         this.songLoaded = false;
         this.audioContext = new window.AudioContext();
@@ -16,6 +17,7 @@ let musicScenes = {
         this.songLoaded = true;
     },
 
+    // internally request audio file
     async loadSong(url) {
         let request = new XMLHttpRequest();
         let audcont = this.audioContext;
@@ -39,6 +41,7 @@ let musicScenes = {
         return audioBuffer;
     },
 
+    // initialize WebAudioAPI sound nodes for flickering
     initSound() {
         this.music = {};
         this.music.sourceNode = this.audioContext.createBufferSource();
@@ -63,6 +66,7 @@ let musicScenes = {
 
     },
 
+    // calculate flicker value
     setFlicker() {
         if (this.audioPlaying) {
             this.music.analyserNode.getByteTimeDomainData(this.music.amplitudeArray);
@@ -79,11 +83,13 @@ let musicScenes = {
 }
 
 let menu = {
+    // load menu assets
     assetLoad() {
         this.load.audio("select", "music/sfx/select.wav");
         this.load.audio("ok", "music/sfx/ok.wav");
     },
 
+    // set object properties with sound effects
     soundInit() {
         this.select = this.sound.add("select");
         this.ok = this.sound.add("ok");
@@ -91,6 +97,7 @@ let menu = {
         this.sound.volume = 0.1;
     },
 
+    // transition to next scene (has ability to keep music through), used for buttons
     goto(scene, stopMusic = true, musicData = {}) {
         return () => {
             if (!this.audioPlaying) {
@@ -119,6 +126,7 @@ let menu = {
           }
     },
 
+    // generic button, no tooltip
     button({x, y, w, h, text, callback, fontSize = h - 24, scrollFactor = 0.1, unlocked = true}) {
         let buttonFrame = this.add.rectangle(x, y, w, h, 0x646496).setStrokeStyle(10, 0x505082).setScrollFactor(scrollFactor);
 

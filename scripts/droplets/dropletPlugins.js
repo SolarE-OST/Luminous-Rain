@@ -6,7 +6,7 @@ class DropletPlugin extends Phaser.Plugins.BasePlugin {
   
     createDroplet(args) {
       return this.displayList.add(
-        new Droplet(this.scene, args)
+        new Droplet(this.scene, this.scene.getTime(4), args)
       );
     }
   }
