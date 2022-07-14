@@ -4,7 +4,9 @@ function between(a, b, c) {
     return (a <= b && b <= c) || (c <= b && b <= a);
 }
 */
-
+let Utils = {
+    dist: (x1, x2, y1, y2) => Math.sqrt((x2 - x1)**2 + (y2 - y1)**2),
+}
 
 let musicScenes = {
     // gets the song given the path and sets object properties

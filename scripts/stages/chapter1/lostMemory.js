@@ -16,6 +16,14 @@ class LostMemory extends Stage {
 
     }
 
+    /* Lost Memory mechanics:
+        - Plain droplets
+        - Linear, Kinematic movements
+        - Circle warnings
+        - Burst, Firework, Falling, Storm patterns
+        - Falling trail
+    */
+
     buildBeatmap() {
         this.beatMap = [
             [
@@ -31,6 +39,23 @@ class LostMemory extends Stage {
                 [1, Pattern.explode({x: 200, y: 100, grav: 0.01, other: {color: 0xff0000}})],
                 [1, Pattern.explode({x: 400, y: 100, grav: 0.01, other: {color: 0xff0000}})],
             ],
+            [
+                [1, Pattern.single("plain", {
+                    movement: Movement.kinematic({
+                        x: 0,
+                        y: 600,
+                        vx: 3,
+                        vy: -6,
+                        ay: 0.05
+                    }),
+                    life: 300,
+                    trail: {
+                        type: "follow",
+                        length: 50,
+                        separation: 10
+                    }
+                })]
+            ]
         ];
     }
 }

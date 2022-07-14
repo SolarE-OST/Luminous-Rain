@@ -3,14 +3,15 @@ class BaseMovement {
         this.x = x;
         this.y = y;
         this.length = length;
+        this.stepLength = 0;
 
         this.complete = false;
     }
-
+/*
     get position() {
         return { x: this.x, y: this.y };
     }
-
+*/
     checkComplete() {
         this.length--;
         if (this.length <= 0) {
@@ -43,6 +44,7 @@ class Linear extends BaseMovement {
 
         this.xStep = (this.xf - this.xi) / length;
         this.yStep = (this.yf - this.yi) / length;
+        this.stepLength = Utils.dist(0, this.xStep, 0, this.yStep);
     }
 
     step() {
@@ -53,6 +55,7 @@ class Linear extends BaseMovement {
             if (between(this.x, this.xf, this.x + this.xStep) || between(this.y, this.yf, this.y + this.yStep)) {
                 */
             this.length--;
+
             if (this.length <= 0) {
                 this.complete = true;
                 this.x = this.xf;
@@ -78,6 +81,8 @@ class Kinematic extends BaseMovement {
             this.vx += this.ax;
             this.vy += this.ay;
 
+            this.stepLength = Utils.dist(0, this.vx, 0, this.vy);
+
             this.checkComplete();
         }
     }
@@ -95,6 +100,7 @@ class Parametric extends BaseMovement {
             this.x = this.para(this.t)[0];
             this.y = this.para(this.t)[1];
             this.t++;
+            this.stepLength = Utils.dist(this.para(this.t - 1)[0], this.x, this.para(this.t - 1)[1], this.y);
 
             this.checkComplete();
         }
@@ -104,7 +110,7 @@ class Parametric extends BaseMovement {
 
 
 class Piecewise extends BaseMovement {
-    constructor({ x, y, movementArray }) {
+    constructor({ x = 0, y = 0, movementArray }) {
         super({ startX: x, startY: y });
         this.movementArray = movementArray;
         this.index = 0;
@@ -114,8 +120,9 @@ class Piecewise extends BaseMovement {
         if (!this.complete) {
             let currentMovement = this.movementArray[this.index];
             currentMovement.step();
-            this.x = currentMovement.position.x;
-            this.y = currentMovement.position.y;
+            this.stepLength = Utils.dist(this.x, currentMovement.x, this.y, currentMovement.y);
+            this.x = currentMovement.x;
+            this.y = currentMovement.y;
             if (this.movementArray[this.index].complete) {
                 this.index++;
                 if (this.index >= this.movementArray.length) {
