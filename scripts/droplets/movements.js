@@ -66,7 +66,7 @@ class Linear extends BaseMovement {
 }
 
 class Kinematic extends BaseMovement {
-    constructor({x, y, vx, vy, ax = 0, ay, length=999999}) {
+    constructor({x, y, vx, vy, ax = 0, ay = 0.05, length=999999}) {
         super({ startX: x, startY: y, totalLength: length });
         this.vx = vx;
         this.vy = vy;
@@ -134,9 +134,38 @@ class Piecewise extends BaseMovement {
 }
 
 const Movement = {
-    still: args => new Still(args), //{ x, y, length = 999999 }
+
+
+    /**
+     * @description Still: Droplet does not move
+     * @param {number} x - X position of droplet
+     * @param {number} y - Y position of droplet
+     * @param {number} [length = 999999] - How long the droplet stays still (in frames)
+     */
+    still: (args) => new Still(args), //{ x, y, length = 999999 }
+
+    /**
+     * @description Linear: Droplet moves in a straight line
+     * @param {number} x - Starting X position of droplet
+     * @param {number} y - Starting Y position of droplet
+     * @param {number} xf - Ending X position of droplet
+     * @param {number} yf - Ending Y position of droplet
+     * @param {number} [length = 999999] - How long does it take to complete (in frames)
+     */
     linear: args => new Linear(args), //{ x, y, xf, yf, length }
     piecewise: args => new Piecewise(args), //{ x, y, movementArray }
+
+    
+    /**
+     * @description Kinematic: Droplet moves with velocity and acceleration
+     * @param {number} x - X position of droplet
+     * @param {number} y - Y position of droplet
+     * @param {number} vx - X velocity of droplet
+     * @param {number} vy - Y velocity of droplet
+     * @param {number} [ax = 0] - X acceleration of droplet
+     * @param {number} [ay = 0.05] - Y acceleration of droplet
+     * @param {number} [length = 999999] - How long the droplet moves kinematically (in frames)
+     */
     kinematic: args => new Kinematic(args), //{x, y, vx, vy, ax = 0, ay, length = 999999 }
     parametric: args => new Parametric(args), //{para, length = 999999 }
 }

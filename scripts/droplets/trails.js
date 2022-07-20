@@ -51,13 +51,15 @@ const Trail = {
 */
 
 const trails = {
-    initTrail({type, separateByTime = true, separation = 30, length = 4, trailIndividualConfig = {}}) { // type, separationType ("distance" or "time"), separation, 
+    initTrail({type, separateByTime = true, separation = 30, length = 4, random = 1, trailConfig = {}, trailIndividualConfig = {}}) { // type, separationType ("distance" or "time"), separation, 
         this.trailCounter = 0;
         this.trailType = type;
         this.separateByTime = separateByTime;
         this.separation = separation;
         this.trailLength = length;
         this.trailDrop = false;
+        this.random = random;
+        this.trailConfig = trailConfig;
         this.trailIndividualConfig = trailIndividualConfig;
 
         if (this.trailType == "follow") {
@@ -90,13 +92,15 @@ const trails = {
             case "follow":
                 //console.log(this.trailIndividualConfig);
                 this.trailLength--;
-                return this.followTrail(this.trailIndividualConfig);
+                return this.followTrail();
+            case "falling":
+                return this.fallingTrail();
             default:
                 console.error(`Trail of type "${this.trailType}" is invalid`);
         }
     },
 
-    followTrail(config){
+    followTrail() {
         let newMovement = structuredClone(this.followedMovement);
         newMovement.checkComplete = this.movement.checkComplete;
         newMovement.step = this.movement.step;
@@ -104,9 +108,63 @@ const trails = {
             movement: newMovement,
             life: this.totalLife,
             delay: 0,
-            other: config
+            other: this.trailIndividualConfig
+        })
+    },
+
+    fallingTrail() {
+        return new Single("plain", {
+            movement: Movement.kinematic({
+                x: this.movement.x,
+                y: this.movement.y,
+                vx: Utils.random(-this.random, this.random),
+                vy: 2,
+                ax: 0,
+                ay: this.trailConfig.ay
+            }),
+            delay: 0,
+            other: this.trailIndividualConfig
         })
     },
 
 
+}
+
+const Trail = {
+    /**
+     * @description Follow: trail of droplets that follow the main droplet
+     * @param {number} length - How many droplets following
+     * @param {number} separation - How separated are the droplets
+     * @param {boolean} separateByTime - Should the trail droplets be separated in time (frames) or by distance traveled
+     * @param {Object} trailIndividualConfig - Other configuration to all individual trail droplets
+     */
+    follow({length = 50, separation = 10, separateByTime = true, trailIndividualConfig = {}}) {
+        return {
+            type: "follow",
+            length: length,
+            separation: separation,
+            separateByTime: separateByTime,
+            trailIndividualConfig: trailIndividualConfig
+        }
+    },
+
+    /**
+     * @description Falling: trail of droplets that follow the main droplet
+     * @param {number} ay - How fast do the droplets fall
+     * @param {number} separation - How separated are the droplets
+     * @param {boolean} separateByTime - Should the trail droplets be separated in time (frames) or by distance traveled
+     * @param {Object} trailIndividualConfig - Other configuration to all individual trail droplets
+     */
+     falling({separation = 10, separateByTime = true, ay = 0.05, trailIndividualConfig = {}}) {
+        return {
+            type: "falling",
+            length: 999999,
+            separation: separation,
+            separateByTime: separateByTime,
+            trailConfig: {
+                ay: ay
+            },
+            trailIndividualConfig: trailIndividualConfig
+        }
+    },
 }

@@ -67,7 +67,8 @@ class Falling extends BasePattern {
 
 class Storm extends BasePattern {
     constructor({length, density=5, speed=5, other = {}}) {
-
+        super();
+        
     }
 }
 

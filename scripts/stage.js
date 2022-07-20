@@ -11,6 +11,7 @@ class Stage extends Phaser.Scene {
         this.difficulty = 0;
         this.tempo = 120;
         this.offset = 0;
+        this.wait = 100;
         this.timeSignature = 4;
         this.songPath = "";
         this.saveLoc = ["", ""];
@@ -26,11 +27,46 @@ class Stage extends Phaser.Scene {
     }
 
     preload() {
+        this.load.image("bb", "images/particle.png");
+        this.getSong(this.songPath);
 
     }
 
     create(data) {
-        this.t = -100;
+        this.t = -this.wait;
+
+        this.waiting = false;
+
+        this.bb = this.add.particles("bb");
+    
+        this.loadingCircle = this.bb.createEmitter({
+            tint: 0x0080ff,
+            x: 300,
+            y: 300,
+            scale: { start: 0.4, end: 0, ease: Phaser.Math.Easing.Quintic.Out },
+            blendMode: "ADD",
+            frequency: 30,
+            emitZone: {
+                type: "edge",
+                source: new Phaser.Geom.Circle(0, 0, 40),
+                quantity: 24,
+                yoyo: false,
+            },
+        });
+        this.loadingText = [];
+        for (let i = 0; i < 3; i++) {
+            this.loadingText[i] = this.add.text(300, 200, "Loading...", {
+                fontSize: 50,
+                align: "center",
+                color: "#f0f076",
+                stroke: "#f0f076",
+                strokeThickness: 3,
+                padding: {
+                    x: 20,
+                    y: 20,
+                }
+            }).setShadow(0, 0, "#f0f076", 20).setOrigin(0.5, 0.5);
+        }
 
         let testLinear = {
             x: 200,
@@ -59,11 +95,15 @@ class Stage extends Phaser.Scene {
         this.activeDroplets = this.physics.add.group()
         this.glow = this.add.layer();
 
+        this.initSound();
+
         this.buildBeatmap();
         this.processBeatmap();
 
+        
 
-        this.cameras.main.setBackgroundColor(this.startBackCol);
+
+        this.cameras.main.setBackgroundColor(this.startingBackgroundColor);
         this.cameras.main.fadeIn(1000, 0, 0, 0);
 
     }
@@ -79,22 +119,87 @@ class Stage extends Phaser.Scene {
                 this.map.push([timestamp, beat[1]]);
             }
         }
+        this.map.push([999999999, "idk"]);
+
     }
 
     update() {
-        this.t++;
-        
+        if (this.t % (settings.songRefreshRate.value * 60) == settings.songRefreshRate.value * 60 - 1 && this.t >= 0) {
+            this.music.sourceNode.stop();
+            this.music.sourceNode = this.audioContext.createBufferSource();
+            this.music.sourceNode.connect(this.music.gainNode);
+            this.music.gainNode.connect(this.audioContext.destination);
+            this.music.sourceNode.connect(this.music.analyserNode);
+            this.music.sourceNode.buffer = this.song;
+            this.music.sourceNode.start(0, this.t / 60);
+            //this.music.gainNode.gain.value = options.musicVolume;
+            this.music.gainNode.gain.value = 0.1;
+            //this.startedMultiplying = true;
+        }
 
+        if (this.songLoaded) {
+            this.t++;
+        }
+
+        if (this.waiting) {
+            this.wait--;
+        }
+
+        if (this.songLoaded && !this.waiting && !this.audioPlaying) {
+            this.waiting = true;
+            this.loadingCircle.stop();
+            this.tweens.add({
+                targets: this.loadingText,
+                alpha: 0,
+                ease: "Quintic.easeOut",
+                duration: 300,
+                delay: 0,
+                repeat: 0
+              }).on("complete", () => {
+              for (let singleText of this.loadingText) {
+                singleText.destroy();
+              }
+              this.loadingText = null;
+              this.loadingCircle = null;
+            });
+        }
+
+        if (this.wait <= 0 && !this.audioPlaying) {
+            //console.log("song playing");
+            this.music.sourceNode.buffer = this.song;
+            //console.log(this.music.sourceNode);
+            this.music.sourceNode.start(0);
+            this.music.gainNode.gain.value = 0.1;
+            this.waiting = false;
+            /*
+            if (this.wait != null && settings.startTime + options.startTime < this.wait) {
+              this.audioContext.suspend();
+            }
+            */
+            this.audioPlaying = true;
+            
+            /*for (let singleText of this.loadingText) {
+              singleText.destroy();
+            }*/
+        }
+      
+        this.setFlicker();
+        
+        //console.log(this.map.length);
         let simultaneous = true;
-        while (simultaneous) {
-            if (this.map.length > 0 && this.t == this.map[0][0]) {
-                let newBullets = this.map[0][1].generate(this);
-                for (let newBullet of newBullets) {
-                    this.activeDroplets.add(newBullet);
+        if (this.map.length > 1) {
+            while (simultaneous) {
+                if (this.t == this.map[0][0]) {
+                    let newBullets = this.map[0][1].generate(this);
+                    for (let newBullet of newBullets) {
+                        this.activeDroplets.add(newBullet);
+                    }
+                    this.map.shift();
+                } else if (this.t > this.map[0][0]) {
+                    this.map.shift();
+                } else {
+                    simultaneous = false;
                 }
-                this.map.shift();
-            } else {
-                simultaneous = false;
             }
         }
 
