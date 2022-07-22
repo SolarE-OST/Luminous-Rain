@@ -11,7 +11,7 @@ class Stage extends Phaser.Scene {
         this.difficulty = 0;
         this.tempo = 120;
         this.offset = 0;
-        this.wait = 100;
+        this.wait = 0;
         this.timeSignature = 4;
         this.songPath = "";
         this.saveLoc = ["", ""];
@@ -33,7 +33,10 @@ class Stage extends Phaser.Scene {
     }
 
     create(data) {
+        this.wait += 100;
         this.t = -this.wait;
+
+        BasePattern.prototype.tempo = this.tempo;
 
         this.waiting = false;
 
@@ -206,7 +209,9 @@ class Stage extends Phaser.Scene {
         for (let activeDroplet of this.activeDroplets.getChildren()) {
             activeDroplet.move();
             if (activeDroplet.readyDelete) {
-                activeDroplet.glow.destroy();
+                if (activeDroplet.glow) {
+                    activeDroplet.glow.destroy();
+                }
                 activeDroplet.destroy();
             }
         }

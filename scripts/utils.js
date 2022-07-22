@@ -5,7 +5,20 @@ function between(a, b, c) {
 }
 */
 let Utils = {
+    /**
+     * @description returns the linear distance between (x1, y1) and (x2, y2)
+     * @param {number} x1 
+     * @param {number} x2 
+     * @param {number} y1 
+     * @param {number} y2 
+     */
     dist: (x1, x2, y1, y2) => Math.sqrt((x2 - x1)**2 + (y2 - y1)**2),
+
+    /**
+     * @description returns a random number between a and b
+     * @param {number} a 
+     * @param {number} b 
+     */
     random: (a, b) => Math.random() * (b - a) + a
 }
 

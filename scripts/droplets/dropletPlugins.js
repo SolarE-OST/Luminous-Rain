@@ -1,12 +1,31 @@
+// Droplets
+
 class DropletPlugin extends Phaser.Plugins.BasePlugin {
     constructor(pluginManager) {
-      super(pluginManager);
-      pluginManager.registerGameObject("droplet", this.createDroplet);
+        super(pluginManager);
+        pluginManager.registerGameObject("droplet", this.createDroplet);
     }
   
     createDroplet(args) {
-      return this.displayList.add(
-        new Droplet(this.scene, this.scene.getTime(4), args)
-      );
+        return this.displayList.add(
+            new Droplet(this.scene, this.scene.getTime(4), args)
+        );
     }
-  }
+}
+
+
+
+// Warnings
+
+class CircleWarningPlugin extends Phaser.Plugins.BasePlugin {
+    constructor(pluginManager) {
+        super(pluginManager);
+        pluginManager.registerGameObject("circleWarning", this.createWarning);
+    }
+  
+    createWarning(args) {
+        return this.displayList.add(
+            new CircleWarning(this.scene, args)
+        );
+    }
+}

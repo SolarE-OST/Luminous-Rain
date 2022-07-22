@@ -1,39 +1,7 @@
-class Droplet extends Phaser.GameObjects.Ellipse { //circle droplet
-    constructor(scene, defaultDelay, {r = 4, movement = Movement.still(300, 300), delay = defaultDelay, life = 999999, dec = false, color = 0x0080ff, trail = {type: "none"}, other = {}}) {
-        super(scene, movement.x, movement.y, 2 * r, 2 * r, 0xffffff)
-        this.scene = scene;
-        this.movement = movement;
-        this.r = r;
-        this.x = this.movement.x;
-        this.y = this.movement.y;
-        this.delay = delay;
-        this.life = life;
-        this.dec = dec;
-        this.color = color;
-
-        if (trail.type == "none") {
-            this.trail = false;
-            this.trailLength = 0;
-        } else {
-            Object.assign(this, trails);
-            this.initTrail(trail);
-            this.scene = scene;
-            this.trail = true;
-        }
-
-        
-        this.readyDelete = false;
-        for (let [k, v] of Object.entries(other)) {
-            this[k] = v;
-        }
-
-        this.glow = scene.glow.add(scene.add.pointlight(this.x, this.y, this.color, this.r * 4, 0.6, 0.07));
-
-    }
-
+const movingObject = {
     checkBoundaries() {
         return this.x > -50 && this.x < 650 && this.y > -50 && this.y < 650;
-    }
+    },
 
     move() {
         if (this.delay <= 0 && 
@@ -86,5 +54,42 @@ class Droplet extends Phaser.GameObjects.Ellipse { //circle droplet
             this.glow.active = false;
         }
     }
+}
+
+class Droplet extends Phaser.GameObjects.Ellipse { //circle droplet
+    constructor(scene, defaultDelay, {r = 4, movement = Movement.still(300, 300), delay = defaultDelay, life = 999999, dec = false, color = 0x0080ff, trail = {type: "none"}, other = {}}) {
+        super(scene, movement.x, movement.y, 2 * r, 2 * r, 0xffffff)
+        this.scene = scene;
+        this.movement = movement;
+        this.r = r;
+        this.x = this.movement.x;
+        this.y = this.movement.y;
+        this.delay = delay;
+        this.life = life;
+        this.dec = dec;
+        this.color = color;
+        Object.assign(this, movingObject);
+
+        if (trail.type == "none") {
+            this.trail = false;
+            this.trailLength = 0;
+        } else {
+            Object.assign(this, trails);
+            this.initTrail(trail);
+            this.scene = scene;
+            this.trail = true;
+        }
+
+        
+        this.readyDelete = false;
+        for (let [k, v] of Object.entries(other)) {
+            this[k] = v;
+        }
+
+        this.glow = scene.glow.add(scene.add.pointlight(this.x, this.y, this.color, this.r * 4, 0.6, 0.07));
+
+    }
+
+    
 }
 
