@@ -10,7 +10,7 @@ class Stage extends Phaser.Scene {
         this.subtitle = "";
         this.difficulty = 0;
         this.tempo = 120;
-        this.offset = 0;
+        this.offset = 0; //decrease if bullets are too early, increase if bullets are too late
         this.wait = 0;
         this.timeSignature = 4;
         this.songPath = "";
@@ -71,13 +71,6 @@ class Stage extends Phaser.Scene {
             }).setShadow(0, 0, "#f0f076", 20).setOrigin(0.5, 0.5);
         }
 
-        let testLinear = {
-            x: 200,
-            y: 300, grav: 0.01,
-            xf: 700,
-            yf: 400,
-            length: 180
-        }
 
         /*
         this.map = [
@@ -111,14 +104,14 @@ class Stage extends Phaser.Scene {
 
     }
 
-    // processes manually charted beatmap into timemap for the game to execute
+    // processes manually charted beatmap into timemap for the game to run
     processBeatmap() {
         // change later to incorporate tempo/time signature changes
         for (let i = 0; i < this.beatMap.length; i++) {
             let measure = this.beatMap[i];
-            let measureTimestamp = i * (this.getTime(this.timeSignature) + 4);
+            let measureTimestamp = this.getTime((i + 1) * this.timeSignature);
             for (let beat of measure) {
-                let timestamp = measureTimestamp + this.getTime(beat[0] - 1) + this.offset;
+                let timestamp = measureTimestamp + this.getTime(beat[0] - 5) + this.offset;
                 this.map.push([timestamp, beat[1]]);
             }
         }
@@ -135,8 +128,8 @@ class Stage extends Phaser.Scene {
             this.music.sourceNode.connect(this.music.analyserNode);
             this.music.sourceNode.buffer = this.song;
             this.music.sourceNode.start(0, this.t / 60);
-            //this.music.gainNode.gain.value = options.musicVolume;
-            this.music.gainNode.gain.value = 0.1;
+            this.music.gainNode.gain.value = settings.musicVolume.value;
+            //this.music.gainNode.gain.value = 0.1;
             //this.startedMultiplying = true;
         }
 
@@ -172,7 +165,7 @@ class Stage extends Phaser.Scene {
             this.music.sourceNode.buffer = this.song;
             //console.log(this.music.sourceNode);
             this.music.sourceNode.start(0);
-            this.music.gainNode.gain.value = 0.1;
+            this.music.gainNode.gain.value = settings.musicVolume.value;
             this.waiting = false;
             /*
             if (this.wait != null && settings.startTime + options.startTime < this.wait) {

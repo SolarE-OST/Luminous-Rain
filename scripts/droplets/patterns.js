@@ -64,8 +64,18 @@ class Explode extends BasePattern {
 }
 
 class Falling extends BasePattern {
-    constructor({x, r = 4, y = -r, vx = Utils.random(-0.5, 0.5), vy = 3, grav = 0.05, other = {}}) {
+    constructor({x, r = 4, y = 0, vx = Utils.random(-0.1, 0.1), vy = 3, grav = 0.05, warn = true, other = {}}) {
         super();
+
+        if (warn) {
+            this.dropletArray.push(new Single("circle warning", {
+                r: 20,
+                x: x,
+                y: y + 3,
+                length: BasePattern.getTime(4)
+            }))
+        }
+
         this.dropletArray.push(new Single("plain", {
             r: r,
             movement: Movement.kinematic({
@@ -75,6 +85,7 @@ class Falling extends BasePattern {
                 vy: vy,
                 ay: grav
             }),
+            delay: BasePattern.getTime(4),
             other: other
         }));
     }
@@ -125,7 +136,7 @@ class MultiSpiral extends BasePattern {
         for (let i = 0; i < length / fpd; i++) {
             for (let j = 0; j < width; j++) {
                 this.dropletArray.push(new Single("plain", {
-                    delay: i * fpd,
+                    delay: i * fpd + BasePattern.getTime(4),
                     color: color,
                     r: radiusArray[j],
                     movement: Movement.kinematic({
@@ -166,7 +177,28 @@ const Pattern = {
      * grav - acceleration of droplets after explosion
      */
     explode: args => new Explode(args), //{x, y, num = 6, speed = 5, grav = 0.05}
+
+    /**
+     * Falling droplet from a specific x value from the top of the screen, accelerates down
+     * 
+     * x - X position of droplet
+     * 
+     * y - Y position of droplet (should be above screen usually)
+     * 
+     * vx - X velocity of droplet (creates tilted droplets, pseudo-wind effect)
+     * 
+     * vy - Y velocity of droplet (initially)
+     * 
+     * grav - Y acceleration of droplet
+     */
     falling: args => new Falling(args),
+
+    /**
+     * Shortcut for falling droplet with default parameters
+     * 
+     * x - X position of droplet
+     */
+    fall: x => new Falling({x: x}),
 
     /**
      * Many droplets that fall for some period of time

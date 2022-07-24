@@ -15,8 +15,8 @@ class MainMenu extends Phaser.Scene {
         this.audioPlaying = false;
         this.initSound();
         this.ampVal = 0;
-        //this.music.gainNode.gain.value = options.musicVolume;
-        this.music.gainNode.gain.value = 0.1;
+        this.music.gainNode.gain.value = settings.musicVolume.value;
+        //this.music.gainNode.gain.value = 0.1;
         this.soundInit();
 
         this.titleText = [];

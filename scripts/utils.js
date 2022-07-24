@@ -109,8 +109,8 @@ let menu = {
     soundInit() {
         this.select = this.sound.add("select");
         this.ok = this.sound.add("ok");
-        //this.sound.volume = options.soundEffectVolume;
-        this.sound.volume = 0.1;
+        this.sound.volume = settings.soundEffectVolume.value;
+        //this.sound.volume = 0.1;
     },
 
     // transition to next scene (has ability to keep music through), used for buttons
@@ -126,8 +126,8 @@ let menu = {
             }
             this.cameras.main.fadeOut(1000, 0, 0, 0, (c, t) => {
               if (stopMusic) {
-                //this.music.gainNode.gain.value = (1 - t) * options.musicVolume;
-                this.music.gainNode.gain.value = (1 - t) * 0.1;
+                this.music.gainNode.gain.value = (1 - t) * settings.musicVolume.value;
+                //this.music.gainNode.gain.value = (1 - t) * 0.1;
               }
             });
             this.songLoaded = false;
